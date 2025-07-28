@@ -11,7 +11,7 @@ from pathlib import Path
 def normalize_path(path):
     return path.replace('\\', '/')
 
-class Load3D_Advanced():
+class Load3D_Adv():
     @classmethod
     def INPUT_TYPES(s):
         input_dir = os.path.join(folder_paths.get_input_directory(), "3d")
@@ -63,7 +63,7 @@ class Load3D_Advanced():
 
         return output_image, output_mask, model_file, normal_image, lineart_image, image['camera_info'], video
 
-class Load3DAnimation_Advanced():
+class Load3DAnimation_Adv():
     @classmethod
     def INPUT_TYPES(s):
         input_dir = os.path.join(folder_paths.get_input_directory(), "3d")
@@ -113,7 +113,7 @@ class Load3DAnimation_Advanced():
 
         return output_image, output_mask, model_file, normal_image, image['camera_info'], video
 
-class Preview3D():
+class Preview3D_Adv():
     @classmethod
     def INPUT_TYPES(s):
         return {"required": {
@@ -140,7 +140,7 @@ class Preview3D():
             }
         }
 
-class Preview3DAnimation():
+class Preview3D_AdvAnimation_Adv():
     @classmethod
     def INPUT_TYPES(s):
         return {"required": {
@@ -167,12 +167,16 @@ class Preview3DAnimation():
             }
         }
 
-NODE_CLASS_MAPPINGS = { "Load3D_Advanced": Load3D_Advanced }
-NODE_DISPLAY_NAME_MAPPINGS = { "Load3D_Advanced": "Load 3D (Advanced)" }
+NODE_CLASS_MAPPINGS = {
+    "Load3D_Adv": Load3D_Adv,
+    "Load3DAnimation_Adv": Load3DAnimation_Adv,
+    "Preview3D_Adv": Preview3D_Adv,
+    "Preview3D_AdvAnimation_Adv": Preview3D_AdvAnimation_Adv
+}
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "Load3D_Advanced": "Load 3D",
-    "Load3DAnimation_Advanced": "Load 3D - Animation",
-    "Preview3D": "Preview 3D",
-    "Preview3DAnimation": "Preview 3D - Animation"
+    "Load3D_Adv": "Load 3D",
+    "Load3DAnimation_Adv": "Load 3D - Animation",
+    "Preview3D_Adv": "Preview 3D",
+    "Preview3D_AdvAnimation_Adv": "Preview 3D - Animation"
 }
