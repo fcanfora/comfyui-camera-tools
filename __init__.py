@@ -1,6 +1,6 @@
 # In file: comfyui-camera-tools/__init__.py
 
-from .load_camera_node import NODE_CLASS_MAPPINGS as camera_mappings, NODE_DISPLAY_NAME_MAPPINGS as camera_display_mappings
+from .camera_nodes import NODE_CLASS_MAPPINGS as camera_mappings, NODE_DISPLAY_NAME_MAPPINGS as camera_display_mappings
 from .nodes_load_3d_advanced import NODE_CLASS_MAPPINGS as load3d_mappings, NODE_DISPLAY_NAME_MAPPINGS as load3d_display_mappings
 
 # Combine the mappings from all your node files
