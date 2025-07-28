@@ -3,7 +3,7 @@ import folder_paths
 import os
 
 from comfy.comfy_types import IO
-from comfy_api.input_impl import VideoFromFile
+# from comfy_api.input_impl import VideoFromFile # --- DISABLED FOR DEBUGGING ---
 
 from pathlib import Path
 
@@ -29,6 +29,7 @@ class Load3D_Adv():
 
         return {"required": {
             "model_file": (sorted(files), {"file_upload": True}),
+            # --- Widget type is now LOAD_3D ---
             "image": ("LOAD_3D", {}),
             "width": ("INT", {"default": 1024, "min": 1, "max": 4096, "step": 1}),
             "height": ("INT", {"default": 1024, "min": 1, "max": 4096, "step": 1}),
@@ -43,25 +44,34 @@ class Load3D_Adv():
     CATEGORY = "3d"
 
     def process(self, model_file, image, **kwargs):
+        # The 'image' input is now a dictionary from our JS widget
+        # For now, we are just passing through placeholder data
+        # In the future, the JS widget will generate real images and send their paths
         image_path = folder_paths.get_annotated_filepath(image['image'])
         mask_path = folder_paths.get_annotated_filepath(image['mask'])
         normal_path = folder_paths.get_annotated_filepath(image['normal'])
         lineart_path = folder_paths.get_annotated_filepath(image['lineart'])
 
         load_image_node = nodes.LoadImage()
-        output_image, ignore_mask = load_image_node.load_image(image=image_path)
-        ignore_image, output_mask = load_image_node.load_image(image=mask_path)
-        normal_image, ignore_mask2 = load_image_node.load_image(image=normal_path)
-        lineart_image, ignore_mask3 = load_image_node.load_image(image=lineart_path)
+        # This will fail until the JS widget saves real images, but the node will load
+        try:
+            output_image, ignore_mask = load_image_node.load_image(image=image_path)
+            ignore_image, output_mask = load_image_node.load_image(image=mask_path)
+            normal_image, ignore_mask2 = load_image_node.load_image(image=normal_path)
+            lineart_image, ignore_mask3 = load_image_node.load_image(image=lineart_path)
+        except Exception as e:
+            print(f"Could not load placeholder images: {e}")
+            # Return None for all image types if they fail to load
+            return (None, None, model_file, None, None, image['camera_info'], None)
+
 
         video = None
-
-        if image['recording'] != "":
-            recording_video_path = folder_paths.get_annotated_filepath(image['recording'])
-
-            video = VideoFromFile(recording_video_path)
+        # if image['recording'] != "":
+        #     recording_video_path = folder_paths.get_annotated_filepath(image['recording'])
+        #     video = VideoFromFile(recording_video_path)
 
         return output_image, output_mask, model_file, normal_image, lineart_image, image['camera_info'], video
+
 
 class Load3DAnimation_Adv():
     @classmethod
@@ -81,6 +91,7 @@ class Load3DAnimation_Adv():
 
         return {"required": {
             "model_file": (sorted(files), {"file_upload": True}),
+            # --- Widget type is now LOAD_3D_ANIMATION ---
             "image": ("LOAD_3D_ANIMATION", {}),
             "width": ("INT", {"default": 1024, "min": 1, "max": 4096, "step": 1}),
             "height": ("INT", {"default": 1024, "min": 1, "max": 4096, "step": 1}),
@@ -100,18 +111,21 @@ class Load3DAnimation_Adv():
         normal_path = folder_paths.get_annotated_filepath(image['normal'])
 
         load_image_node = nodes.LoadImage()
-        output_image, ignore_mask = load_image_node.load_image(image=image_path)
-        ignore_image, output_mask = load_image_node.load_image(image=mask_path)
-        normal_image, ignore_mask2 = load_image_node.load_image(image=normal_path)
+        try:
+            output_image, ignore_mask = load_image_node.load_image(image=image_path)
+            ignore_image, output_mask = load_image_node.load_image(image=mask_path)
+            normal_image, ignore_mask2 = load_image_node.load_image(image=normal_path)
+        except Exception as e:
+            print(f"Could not load placeholder images: {e}")
+            return (None, None, model_file, None, image['camera_info'], None)
 
         video = None
-
-        if image['recording'] != "":
-            recording_video_path = folder_paths.get_annotated_filepath(image['recording'])
-
-            video = VideoFromFile(recording_video_path)
+        # if image['recording'] != "":
+        #     recording_video_path = folder_paths.get_annotated_filepath(image['recording'])
+        #     video = VideoFromFile(recording_video_path)
 
         return output_image, output_mask, model_file, normal_image, image['camera_info'], video
+
 
 class Preview3D_Adv():
     @classmethod
@@ -167,6 +181,7 @@ class Preview3D_AdvAnimation_Adv():
             }
         }
 
+# Corrected Node Registration Block
 NODE_CLASS_MAPPINGS = {
     "Load3D_Adv": Load3D_Adv,
     "Load3DAnimation_Adv": Load3DAnimation_Adv,
